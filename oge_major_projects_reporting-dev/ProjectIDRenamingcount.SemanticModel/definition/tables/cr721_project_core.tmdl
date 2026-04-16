@@ -1,0 +1,39 @@
+table cr721_project_core
+	excludeFromModelRefresh
+	lineageTag: c585c4e5-3a80-4bcf-acd9-a26d18709f19
+
+	column Table
+		dataType: string
+		lineageTag: 2ab0d499-786f-42fd-9916-fabc08e05421
+		summarizeBy: none
+		sourceColumn: Table
+
+		annotation SummarizationSetBy = Automatic
+
+	column Count
+		dataType: double
+		lineageTag: 5d33c5f5-fe0d-47ef-969c-366ae9a90c52
+		summarizeBy: sum
+		sourceColumn: Count
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition cr721_project_core = m
+		mode: import
+		source =
+				let
+				    Source = CommonDataService.Database("upm.crm.dynamics.com"),
+				    dbo_cr721_project_core = Source{[Schema="dbo",Item="cr721_project_core"]}[Data],
+				    #"Grouped Rows" = Table.Group(dbo_cr721_project_core, {"cr721_project_coreid"}, {{"Count", each Table.RowCount(_), Int64.Type}}),
+				    #"Added Custom" = Table.AddColumn(#"Grouped Rows", "Table", each "cr721_project_coreid"),
+				    #"Removed Columns" = Table.RemoveColumns(#"Added Custom",{"cr721_project_coreid"}),
+				    #"Grouped Rows1" = Table.Group(#"Removed Columns", {"Table"}, {{"Count", each List.Sum([Count]), type number}})
+				in
+				    #"Grouped Rows1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

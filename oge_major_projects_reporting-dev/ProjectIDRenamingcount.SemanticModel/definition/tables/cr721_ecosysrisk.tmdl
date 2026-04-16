@@ -1,0 +1,38 @@
+table cr721_ecosysrisk
+	excludeFromModelRefresh
+	lineageTag: 2d84994c-58ad-4b71-9583-76b73745b55d
+
+	column Table
+		dataType: string
+		lineageTag: e3726a56-a373-4cc7-b37a-5807ea333bbf
+		summarizeBy: none
+		sourceColumn: Table
+
+		annotation SummarizationSetBy = Automatic
+
+	column Count
+		dataType: double
+		lineageTag: 03d8e66f-3ada-4c72-a088-ad6027edd38a
+		summarizeBy: sum
+		sourceColumn: Count
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition cr721_ecosysrisk = m
+		mode: import
+		source =
+				let
+				    Source = CommonDataService.Database("upm.crm.dynamics.com"),
+				    dbo_cr721_ecosysrisk = Source{[Schema="dbo",Item="cr721_ecosysrisk"]}[Data],
+				    #"Grouped Rows" = Table.Group(dbo_cr721_ecosysrisk, {"cr721_ecosysriskid"}, {{"Count", each Table.RowCount(_), Int64.Type}}),
+				    #"Added Custom" = Table.AddColumn(#"Grouped Rows", "Table", each "cr721_ecosysrisk"),
+				    #"Grouped Rows1" = Table.Group(#"Added Custom", {"Table"}, {{"Count", each List.Sum([Count]), type number}})
+				in
+				    #"Grouped Rows1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

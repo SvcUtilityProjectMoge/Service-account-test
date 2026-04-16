@@ -1,0 +1,28 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: en-US
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["cr721_project_core","cr721_costtablemonth","upm_transmissionplanlookupsppduid","cr721_ecosyschange","cr721_ecosyscost","cr721_ecosysfctvarcomments","cr721_ecosysrisk","cr721_ecosyssummary_2","upm_ecosys_ogedepolineitems","upm_ecosys_ogepoexport","upm_ecosyscostsapvariance","upm_ecosysposummary","Append1"]
+
+ref table cr721_project_core
+ref table cr721_costtablemonth
+ref table upm_transmissionplanlookupsppduid
+ref table cr721_ecosyschange
+ref table cr721_ecosyscost
+ref table cr721_ecosysfctvarcomments
+ref table cr721_ecosysrisk
+ref table cr721_ecosyssummary_2
+ref table upm_ecosys_ogedepolineitems
+ref table upm_ecosys_ogepoexport
+ref table upm_ecosyscostsapvariance
+ref table upm_ecosysposummary
+ref table Append1
+
+ref cultureInfo en-US
+

@@ -1,0 +1,32 @@
+table Append1
+	lineageTag: 8d19c562-5f02-4e89-9b7e-606ed961f818
+
+	column Table
+		dataType: string
+		lineageTag: 29807f49-1e96-4148-a1cb-9a528ae18f1c
+		summarizeBy: none
+		sourceColumn: Table
+
+		annotation SummarizationSetBy = Automatic
+
+	column Count
+		dataType: double
+		formatString: #,0
+		lineageTag: f916b578-a069-4ccf-aaca-bf31a6ab7e9f
+		summarizeBy: sum
+		sourceColumn: Count
+
+		annotation SummarizationSetBy = Automatic
+
+	partition Append1 = m
+		mode: import
+		source =
+				let
+				    Source = Table.Combine({upm_ecosysposummary, cr721_project_core, cr721_costtablemonth, upm_transmissionplanlookupsppduid, cr721_ecosyschange, cr721_ecosyscost, cr721_ecosysfctvarcomments, cr721_ecosysrisk, cr721_ecosyssummary_2, upm_ecosys_ogedepolineitems, upm_ecosys_ogepoexport, upm_ecosyscostsapvariance})
+				in
+				    Source
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

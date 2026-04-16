@@ -1,0 +1,11 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/gitIntegration/platformProperties/2.0.0/schema.json",
+  "metadata": {
+    "type": "Report",
+    "displayName": "ProjectIDRenamingcount"
+  },
+  "config": {
+    "version": "2.0",
+    "logicalId": "82896e5d-8356-ae8a-40e3-87152d02b559"
+  }
+}

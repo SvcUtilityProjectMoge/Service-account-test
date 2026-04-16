@@ -1,0 +1,38 @@
+table cr721_ecosyscost
+	excludeFromModelRefresh
+	lineageTag: f9d8facc-549e-4f1f-8582-c26b07316ae1
+
+	column Table
+		dataType: string
+		lineageTag: 299d4262-1620-4c6d-a7c7-3ed509f6bd41
+		summarizeBy: none
+		sourceColumn: Table
+
+		annotation SummarizationSetBy = Automatic
+
+	column Count
+		dataType: double
+		lineageTag: 8f413864-10e1-45c8-8bb5-78ab77638461
+		summarizeBy: sum
+		sourceColumn: Count
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition cr721_ecosyscost = m
+		mode: import
+		source =
+				let
+				    Source = CommonDataService.Database("upm.crm.dynamics.com"),
+				    dbo_cr721_ecosyscost = Source{[Schema="dbo",Item="cr721_ecosyscost"]}[Data],
+				    #"Grouped Rows" = Table.Group(dbo_cr721_ecosyscost, {"cr721_ecosyscostid"}, {{"Count", each Table.RowCount(_), Int64.Type}}),
+				    #"Added Custom" = Table.AddColumn(#"Grouped Rows", "Table", each "cr721_ecosyscost"),
+				    #"Grouped Rows1" = Table.Group(#"Added Custom", {"Table"}, {{"Count", each List.Sum([Count]), type number}})
+				in
+				    #"Grouped Rows1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,38 @@
+table upm_ecosysposummary
+	excludeFromModelRefresh
+	lineageTag: c37bb716-075f-4e9e-b786-0ce0f9a60386
+
+	column Table
+		dataType: string
+		lineageTag: 77c57168-c057-4e7e-968f-f9f4173ffc0e
+		summarizeBy: none
+		sourceColumn: Table
+
+		annotation SummarizationSetBy = Automatic
+
+	column Count
+		dataType: double
+		lineageTag: 2b142aca-2443-496f-a22e-cff4c7900b0a
+		summarizeBy: sum
+		sourceColumn: Count
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition upm_ecosysposummary = m
+		mode: import
+		source =
+				let
+				    Source = CommonDataService.Database("upm.crm.dynamics.com"),
+				    dbo_upm_ecosysposummary = Source{[Schema="dbo",Item="upm_ecosysposummary"]}[Data],
+				    #"Grouped Rows" = Table.Group(dbo_upm_ecosysposummary, {"upm_ecosysposummaryid"}, {{"Count", each Table.RowCount(_), Int64.Type}}),
+				    #"Added Custom" = Table.AddColumn(#"Grouped Rows", "Table", each "upm_ecosysposummary"),
+				    #"Grouped Rows1" = Table.Group(#"Added Custom", {"Table"}, {{"Count", each List.Sum([Count]), type number}})
+				in
+				    #"Grouped Rows1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

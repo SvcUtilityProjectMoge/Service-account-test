@@ -1,0 +1,38 @@
+table cr721_costtablemonth
+	excludeFromModelRefresh
+	lineageTag: aba1b1d3-ec03-450c-acd0-2beef38b54f1
+
+	column Table
+		dataType: string
+		lineageTag: 9cedfaf8-ca62-4370-ae2d-a86798d98675
+		summarizeBy: none
+		sourceColumn: Table
+
+		annotation SummarizationSetBy = Automatic
+
+	column Count
+		dataType: double
+		lineageTag: c81e1707-6d03-472c-b11f-440e6abe97f5
+		summarizeBy: sum
+		sourceColumn: Count
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition cr721_costtablemonth = m
+		mode: import
+		source =
+				let
+				    Source = CommonDataService.Database("upm.crm.dynamics.com"),
+				    dbo_cr721_costtablemonth = Source{[Schema="dbo",Item="cr721_costtablemonth"]}[Data],
+				    #"Grouped Rows" = Table.Group(dbo_cr721_costtablemonth, {"cr721_costtablemonthid"}, {{"Count", each Table.RowCount(_), Int64.Type}}),
+				    #"Added Custom" = Table.AddColumn(#"Grouped Rows", "Table", each "cr721_costtablemonth"),
+				    #"Grouped Rows1" = Table.Group(#"Added Custom", {"Table"}, {{"Count", each List.Sum([Count]), type number}})
+				in
+				    #"Grouped Rows1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

@@ -1,0 +1,38 @@
+table cr721_ecosysfctvarcomments
+	excludeFromModelRefresh
+	lineageTag: 79f4b89b-fb38-4687-b360-46446be61004
+
+	column Table
+		dataType: string
+		lineageTag: eccf9107-abd8-4737-af29-ebdafa60ef73
+		summarizeBy: none
+		sourceColumn: Table
+
+		annotation SummarizationSetBy = Automatic
+
+	column Count
+		dataType: double
+		lineageTag: 88811f53-02c2-4462-b9b2-67f774aa3f52
+		summarizeBy: sum
+		sourceColumn: Count
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition cr721_ecosysfctvarcomments = m
+		mode: import
+		source =
+				let
+				    Source = CommonDataService.Database("upm.crm.dynamics.com"),
+				    dbo_cr721_ecosysfctvarcomments = Source{[Schema="dbo",Item="cr721_ecosysfctvarcomments"]}[Data],
+				    #"Grouped Rows" = Table.Group(dbo_cr721_ecosysfctvarcomments, {"cr721_ecosysfctvarcommentsid"}, {{"Count", each Table.RowCount(_), Int64.Type}}),
+				    #"Added Custom" = Table.AddColumn(#"Grouped Rows", "Table", each "cr721_ecosysfctvarcomments"),
+				    #"Grouped Rows1" = Table.Group(#"Added Custom", {"Table"}, {{"Count", each List.Sum([Count]), type number}})
+				in
+				    #"Grouped Rows1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

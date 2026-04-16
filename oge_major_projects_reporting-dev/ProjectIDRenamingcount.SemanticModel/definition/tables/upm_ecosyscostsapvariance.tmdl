@@ -1,0 +1,38 @@
+table upm_ecosyscostsapvariance
+	excludeFromModelRefresh
+	lineageTag: 3f706338-7253-4478-8125-4bd051ce7fbe
+
+	column Table
+		dataType: string
+		lineageTag: 7920590e-40e7-404c-a9ea-40da37353397
+		summarizeBy: none
+		sourceColumn: Table
+
+		annotation SummarizationSetBy = Automatic
+
+	column Count
+		dataType: double
+		lineageTag: 9c9ff341-4279-4e3f-a93f-1c4cc9dcf039
+		summarizeBy: sum
+		sourceColumn: Count
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	partition upm_ecosyscostsapvariance = m
+		mode: import
+		source =
+				let
+				    Source = CommonDataService.Database("upm.crm.dynamics.com"),
+				    dbo_upm_ecosyscostsapvariance = Source{[Schema="dbo",Item="upm_ecosyscostsapvariance"]}[Data],
+				    #"Grouped Rows" = Table.Group(dbo_upm_ecosyscostsapvariance, {"upm_ecosyscostsapvarianceid"}, {{"Count", each Table.RowCount(_), Int64.Type}}),
+				    #"Added Custom" = Table.AddColumn(#"Grouped Rows", "Table", each "upm_ecosyscostsapvariance"),
+				    #"Grouped Rows1" = Table.Group(#"Added Custom", {"Table"}, {{"Count", each List.Sum([Count]), type number}})
+				in
+				    #"Grouped Rows1"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+
